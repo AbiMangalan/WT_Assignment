@@ -1,6 +1,16 @@
 const user = require('../model/userModel');
 const { sign } = require('jsonwebtoken');
 const { isRequired } = require('./validator/userValidations');
+const post = require('../model/postModel');
+
+const getNextId = async function () {
+    try {
+        const nextId = await user.find().count();
+        return nextId;
+    } catch (err) {
+        console.log(err.message);
+    }
+};
 
 const register = async function (req, res) {
     try {
@@ -86,35 +96,72 @@ const editProfile = async function (req, res) {
     } catch (err) {
         return res
             .status(500)
-            .send({ 
-                status: false, 
-                message: err.message 
+            .send({
+                status: false,
+                message: err.message
             });
     }
 };
 
-const follow = async function(req, res) {
+const follow = async function (req, res) {
     try {
-        
+        const followedUser = await user.findOneAndUpdate({
+            user_id: req.params.userId
+        }, {
+            $inc: { followerCount: 1 },
+            addToSet: { followedBy: { req } }
+        });
+        const follower = await user.findOneAndUpdate({
+
+        });
     } catch (err) {
         return res
             .status(500)
-            .send({ 
-                status: false, 
-                message: err.message 
+            .send({
+                status: false,
+                message: err.message
             });
     }
 };
 
-const block = async function(req, res) {
+const block = async function (req, res) {
     try {
 
     } catch (err) {
         return res
             .status(500)
-            .send({ 
-                status: false, 
-                message: err.message 
+            .send({
+                status: false,
+                message: err.message
+            });
+    }
+};
+
+const profileDetails = async function (req, res) {
+    try {
+        const userProfile = await user.findOne({ user_id: req.params.userId });
+        if (!userProfile) {
+            return res
+                .status(404)
+                .send({
+                    status: false,
+                    message: "User not found.",
+                });
+        }
+        let details = {
+            name: userProfile.name,
+            user_name: userProfile.user_name,
+            followers: userProfile.followerCount,
+            following: userProfile.followingCount
+        }
+        const postDetails = await post.find({});
+
+    } catch (err) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: err.message
             });
     }
 };

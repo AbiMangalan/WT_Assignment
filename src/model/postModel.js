@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const postSchema = new mongoose.Schema({
+    postedBy: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'users'
+    },
     decription: {
         type: String
     },
@@ -17,18 +21,12 @@ const postSchema = new mongoose.Schema({
         default: true
     },
     hashTag: [String],
-    friendtag: [{
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: 'users'
-    }],
+    friendtag: [Number],
     likes: {
         type: Number,
         default: 0
     },
-    likedBy: [{
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: 'users'
-    }],
+    likedBy: [Number],
     comments: [String]
 }, {
     timestamps: true
