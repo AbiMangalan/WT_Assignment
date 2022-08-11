@@ -44,19 +44,21 @@ const editPost = async function (req, res) {
     }
 };
 
-const like = async function (req, res) {
+const likePost = async function (req, res) {
     try {
         const userDet = await user.findOne({ user_id: req.user_id });
-        if(userDet.likedPosts.includes(req.params.postId)) {
+        if (userDet.likedPosts.includes(req.params.postId)) {
             return res
                 .status(200)
                 .send({
                     status: true,
-                    message: "Post exists already in liked posts"
+                    message: "Post already liked"
                 });
         }
+        userDet.likedPosts.push(req.params.postId);
+        await userDet.save();
         const postUpdated = await post.findOneAndUpdate({
-            user_id: req.params.user_id
+            _id: req.params.postId
         }, {
             $inc: { likes: 1 }
         });
@@ -64,7 +66,7 @@ const like = async function (req, res) {
             .status(200)
             .send({
                 status: true,
-                message: "Post added to Liked posts"
+                message: "Post added to liked posts"
             });
     } catch (err) {
         return res
@@ -110,7 +112,7 @@ const deletePost = async function (req, res) {
 
 const getFeed = async function (req, res) {
     try {
-
+        
     } catch (err) {
         return res
             .status(500)
@@ -121,4 +123,4 @@ const getFeed = async function (req, res) {
     }
 }
 
-module.exports = { createPost, editPost, like, deletePost, getFeed };
+module.exports = { createPost, editPost, likePost, deletePost, getFeed };

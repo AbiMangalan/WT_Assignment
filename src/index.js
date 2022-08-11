@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+const router = require('./route/router');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

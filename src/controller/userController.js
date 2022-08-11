@@ -111,7 +111,7 @@ const follow = async function (req, res) {
             $inc: { followerCount: 1 },
             $addToSet: { followedBy: req.userId }
         }, {
-            returnNewDocument: true
+            new: true
         });
         const follower = await user.findOneAndUpdate({
             user_id: req.userId
@@ -119,7 +119,7 @@ const follow = async function (req, res) {
             $inc: { followingCount: 1 },
             $addToSet: { follows: req.params.userId }
         }, {
-            returnNewDocument: true
+            new: true
         });
         return res
             .status(200)
@@ -145,7 +145,7 @@ const unfollow = async function (req, res) {
             $inc: { followerCount: -1 },
             $pull: { followedBy: req.userId }
         }, {
-            returnNewDocument: true
+            new: true
         });
         const follower = await user.findOneAndUpdate({
             user_id: req.userId
@@ -153,7 +153,7 @@ const unfollow = async function (req, res) {
             $inc: { followingCount: -1 },
             $pull: { follows: req.params.userId }
         }, {
-            returnNewDocument: true
+            new: true
         });
         return res
             .status(200)
@@ -173,7 +173,19 @@ const unfollow = async function (req, res) {
 
 const block = async function (req, res) {
     try {
-
+        const updatedUser = await user.findOneAndUpdate({
+            user_id: req.user_id
+        }, {
+            $addToSet: { blockedUsers: req.params.userId }
+        }, {
+            new: true
+        });
+        return res
+            .status(200)
+            .send({
+                status: true,
+                message: "User has been blocked"
+            });
     } catch (err) {
         return res
             .status(500)
@@ -186,7 +198,19 @@ const block = async function (req, res) {
 
 const unblock = async function (req, res) {
     try {
-
+        const updatedUser = await user.findOneAndUpdate({
+            user_id: req.user_id
+        }, {
+            $pull: { blockedUsers: req.params.userId }
+        }, {
+            new: true
+        });
+        return res
+            .status(200)
+            .send({
+                status: true,
+                message: "User has been unblocked"
+            });
     } catch (err) {
         return res
             .status(500)

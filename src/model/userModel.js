@@ -41,7 +41,6 @@ const userSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'posts'
     }],
-    blockedBy: [Number],
     blockedUsers: [Number],
 }, {
     timestamps: true

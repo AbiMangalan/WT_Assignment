@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, editProfile, follow, unfollow, block, unblock, profileDetails, follow } = require('../controller/userController');
-const { createPost, editPost, like, deletePost, getFeed } = require('../controller/postController');
+const { register, login, editProfile, follow, unfollow, block, unblock, profileDetails } = require('../controller/userController');
+const { createPost, editPost, likePost, deletePost, getFeed } = require('../controller/postController');
 
 // Users -> user registration, user login, follow / unfollow user, block / unblock user, edit profile
 
@@ -20,7 +20,7 @@ router.get('/users/:userId', profileDetails); //profile details, follow count, f
 // APIs for Posts
 router.post('/users/:userId/posts/create', createPost);
 router.patch('/users/:userId/posts/:postId/edit', editPost);
-router.patch('/users/:userId/posts/:postId/edit', like);
+router.patch('/users/:userId/posts/:postId/edit', likePost);
 router.delete('/users/:userId/posts/:postId/delete', deletePost);
 
 // Explore APIs
