@@ -41,7 +41,15 @@ const userSchema = new mongoose.Schema({
         ref: 'users'
     }],
     followingCount: Number,
-    postCount: Number
+    postCount: Number,
+    blockedBy: [{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'users'
+    }],
+    blockedUsers: [{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'users'
+    }],
 }, {
     timestamps: true
 });

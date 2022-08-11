@@ -8,14 +8,27 @@ const postSchema = new mongoose.Schema({
         data: Buffer,
         type: String
     },
+    video: {
+        data: Buffer,
+        type: String
+    },
     isPublic: {
         type: Boolean,
         default: true
     },
     hashTag: [String],
-    friendtag: [String],
-    likes: Number,
-    likedBy: [{ type: mongoose.SchemaTypes.ObjectId }],
+    friendtag: [{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'users'
+    }],
+    likes: {
+        type: Number,
+        default: 0
+    },
+    likedBy: [{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'users'
+    }],
     comments: [String]
 }, {
     timestamps: true

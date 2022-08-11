@@ -57,12 +57,12 @@ const login = async function (req, res) {
                     error: errors
                 });
         }
-        const { userId } = await user
+        const { user_id } = await user
             .findOne({
                 user_name: loginCredentials.user_name,
                 password: loginCredentials.password
             })
-        const token = sign({ userId }, process.env.SECRET_KEY);
+        const token = sign({ user_id }, process.env.SECRET_KEY);
         return res
             .status(200)
             .send({
@@ -82,7 +82,7 @@ const login = async function (req, res) {
 
 const editProfile = async function (req, res) {
     try {
-        
+
     } catch (err) {
         return res
             .status(500)
@@ -95,7 +95,7 @@ const editProfile = async function (req, res) {
 
 const follow = async function(req, res) {
     try {
-
+        
     } catch (err) {
         return res
             .status(500)
