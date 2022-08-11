@@ -26,13 +26,13 @@ const register = async function (req, res) {
         }
         const userData = {
             name: req.body.name,
-            user_id: getNextId(),
-            password: req.bod.password,
+            user_id: await getNextId(),
+            password: req.body.password,
             email_id: req.body.email_id,
             user_name: req.body.user_name,
             gender: req.body.gender,
             mobile_no: req.body.mobile_no,
-            isPublic: req.body.isPublic
+            isPublic: false
         }
         const newUser = await user.create(userData);
         return res
@@ -109,11 +109,58 @@ const follow = async function (req, res) {
             user_id: req.params.userId
         }, {
             $inc: { followerCount: 1 },
-            addToSet: { followedBy: { req } }
+            $addToSet: { followedBy: req.userId }
+        }, {
+            returnNewDocument: true
         });
         const follower = await user.findOneAndUpdate({
-
+            user_id: req.userId
+        }, {
+            $inc: { followingCount: 1 },
+            $addToSet: { follows: req.params.userId }
+        }, {
+            returnNewDocument: true
         });
+        return res
+            .status(200)
+            .send({
+                status: true,
+                message: `${follower.name} started following ${followedUser.name}`
+            });
+    } catch (err) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: err.message
+            });
+    }
+};
+
+const unfollow = async function (req, res) {
+    try {
+        const followedUser = await user.findOneAndUpdate({
+            user_id: req.params.userId
+        }, {
+            $inc: { followerCount: -1 },
+            $pull: { followedBy: req.userId }
+        }, {
+            returnNewDocument: true
+        });
+        const follower = await user.findOneAndUpdate({
+            user_id: req.userId
+        }, {
+            $inc: { followingCount: -1 },
+            $pull: { follows: req.params.userId }
+        }, {
+            returnNewDocument: true
+        });
+        return res
+            .status(200)
+            .send({
+                status: true,
+                message: `${follower.name} unfollowed ${followedUser.name}`
+            });
     } catch (err) {
         return res
             .status(500)
@@ -125,6 +172,19 @@ const follow = async function (req, res) {
 };
 
 const block = async function (req, res) {
+    try {
+
+    } catch (err) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: err.message
+            });
+    }
+};
+
+const unblock = async function (req, res) {
     try {
 
     } catch (err) {
@@ -166,4 +226,4 @@ const profileDetails = async function (req, res) {
     }
 };
 
-module.exports = { register, login, editProfile, follow, block };
+module.exports = { register, login, editProfile, follow, unfollow, block, unblock, profileDetails };

@@ -17,8 +17,8 @@ const createPost = async function (req, res) {
         return res
             .status(201)
             .send({
-                status: true, 
-                message: "Post added successfully", 
+                status: true,
+                message: "Post added successfully",
                 data: newPost
             });
     } catch (err) {
@@ -33,7 +33,7 @@ const createPost = async function (req, res) {
 
 const editPost = async function (req, res) {
     try {
-        
+
     } catch (err) {
         return res
             .status(500)
@@ -44,9 +44,28 @@ const editPost = async function (req, res) {
     }
 };
 
-const like = async function(req, res) {
+const like = async function (req, res) {
     try {
-
+        const userDet = await user.findOne({ user_id: req.user_id });
+        if(userDet.likedPosts.includes(req.params.postId)) {
+            return res
+                .status(200)
+                .send({
+                    status: true,
+                    message: "Post exists already in liked posts"
+                });
+        }
+        const postUpdated = await post.findOneAndUpdate({
+            user_id: req.params.user_id
+        }, {
+            $inc: { likes: 1 }
+        });
+        return res
+            .status(200)
+            .send({
+                status: true,
+                message: "Post added to Liked posts"
+            });
     } catch (err) {
         return res
             .status(500)
@@ -59,7 +78,26 @@ const like = async function(req, res) {
 
 const deletePost = async function (req, res) {
     try {
-
+        const deleted = await post.findOneAndUpdate({
+            user_id: req.params.user_id,
+            isDleted: false
+        }, {
+            isDeleted: true
+        });
+        if (deleted) {
+            return res
+                .status(200)
+                .send({
+                    status: true,
+                    message: "Post deleted successfully"
+                });
+        }
+        return res
+            .status(404)
+            .send({
+                status: false,
+                message: "Post not found or has already been deleted"
+            });
     } catch (err) {
         return res
             .status(500)
@@ -70,4 +108,17 @@ const deletePost = async function (req, res) {
     }
 };
 
-module.exports = { createPost, editPost, like, deletePost };
+const getFeed = async function (req, res) {
+    try {
+
+    } catch (err) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: err.message
+            });
+    }
+}
+
+module.exports = { createPost, editPost, like, deletePost, getFeed };

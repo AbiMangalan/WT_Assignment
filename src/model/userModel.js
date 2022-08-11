@@ -37,6 +37,10 @@ const userSchema = new mongoose.Schema({
     follows: [Number],
     followingCount: Number,
     postCount: Number,
+    likedPosts: [{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'posts'
+    }],
     blockedBy: [Number],
     blockedUsers: [Number],
 }, {

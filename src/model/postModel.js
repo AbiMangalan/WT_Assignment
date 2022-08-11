@@ -26,8 +26,11 @@ const postSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    likedBy: [Number],
-    comments: [String]
+    comments: [String],
+    isDleted: {
+        type: Boolean,
+        default: false
+    }
 }, {
     timestamps: true
 }
