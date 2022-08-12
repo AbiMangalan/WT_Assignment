@@ -1,12 +1,12 @@
 const user = require('../model/userModel');
 const { sign } = require('jsonwebtoken');
-const { isInvalid } = require('./validator/userValidations');
+const { isRequired, isInvalid, isValid } = require('./validator/userValidations');
 const post = require('../model/postModel');
 
 const getNextId = async function () {
     try {
         const nextId = await user.find().count();
-        return nextId;
+        return nextId + 1;
     } catch (err) {
         console.log(err.message);
     }
@@ -14,19 +14,17 @@ const getNextId = async function () {
 
 const register = async function (req, res, next) {
     try {
-        // const getEmail = await user.findOne({ email_id: req.body.email_id });
-        // const getMobile = await user.findOne({ mobile_no: req.body.mobile_no.trim().slice(-10) });
-        // const getUserName = await user.findOne({ user_name: req.body.user_name });
-        // const errors = isInvalid(req.body, getEmail, getMobile, getUserName);
-        // if (errors.length) {
-        //     return res
-        //         .status(400)
-        //         .send({
-        //             status: false,
-        //             message: 'Bad request',
-        //             error: errors
-        //         });
-        // }
+        let errors = await isRequired(req.body);
+        errors.push(...await isInvalid(req.body));
+        if (errors.length) {
+            return res
+                .status(400)
+                .send({
+                    status: false,
+                    message: 'Bad request',
+                    error: errors
+                });
+        }
         const userData = {
             name: req.body.name,
             user_id: await getNextId(),
@@ -34,7 +32,7 @@ const register = async function (req, res, next) {
             email_id: req.body.email_id,
             user_name: req.body.user_name,
             gender: req.body.gender,
-            mobile_no: req.body.mobile_no,
+            mobile: req.body.mobile,
             isPublic: false
         }
         const newUser = await user.create(userData);
@@ -45,8 +43,6 @@ const register = async function (req, res, next) {
                 message: "User Created Successfully",
                 data: newUser
             });
-
-
     } catch (err) {
         return res
             .status(500)

@@ -24,10 +24,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ["Male", "Female", "Others"]
     },
-    mobile_no: {
-        type: Number,
-        default: false
-    },
+    mobile: Number,
     isPublic: {
         type: Boolean,
         default: true
