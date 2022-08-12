@@ -14,19 +14,19 @@ const getNextId = async function () {
 
 const register = async function (req, res, next) {
     try {
-        const getEmail = await user.findOne({ email_id: req.body.email_id });
-        const getMobile = await user.findOne({ mobile_no: req.body.mobile_no.trim().slice(-10) });
-        const getUserName = await user.findOne({ user_name: req.body.user_name });
-        const errors = isInvalid(req.body, getEmail, getMobile, getUserName);
-        if (errors.length) {
-            return res
-                .status(400)
-                .send({
-                    status: false,
-                    message: 'Bad request',
-                    error: errors
-                });
-        }
+        // const getEmail = await user.findOne({ email_id: req.body.email_id });
+        // const getMobile = await user.findOne({ mobile_no: req.body.mobile_no.trim().slice(-10) });
+        // const getUserName = await user.findOne({ user_name: req.body.user_name });
+        // const errors = isInvalid(req.body, getEmail, getMobile, getUserName);
+        // if (errors.length) {
+        //     return res
+        //         .status(400)
+        //         .send({
+        //             status: false,
+        //             message: 'Bad request',
+        //             error: errors
+        //         });
+        // }
         const userData = {
             name: req.body.name,
             user_id: await getNextId(),
