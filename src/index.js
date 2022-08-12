@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(multer().any());
 
-mongoose.connect(process.env.DB_CONN_STRING,
+mongoose.connect("mongodb+srv://AbiM-DB:5mi7p8PpLWYbYDAM@cluster0.qpomb.mongodb.net/AbiM-DB?authSource=admin&replicaSet=atlas-w1wit2-shard-0&readPreference=primary&ssl=true",
     { useNewUrlParser: true })
     .then(() => console.log('MongoDb connected...'))
     .catch((err) => console.log(err.message));
