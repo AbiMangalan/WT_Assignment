@@ -1,9 +1,10 @@
 const post = require('../model/postModel');
-const { isRequired } = require('./validator/postValidations');
+const user = require('../model/userModel');
+const { isInvalid } = require('./validator/postValidations');
 
-const createPost = async function (req, res) {
+const createPost = async function (req, res, next) {
     try {
-        const errors = isRequired(req.body);
+        let errors = isInvalid(req.body);
         if (errors.length) {
             return res
                 .status(400)
@@ -31,8 +32,43 @@ const createPost = async function (req, res) {
     }
 };
 
-const editPost = async function (req, res) {
+const editPost = async function (req, res, next) {
     try {
+        const { description, isPublic, hashTag, friendTag } = req.body;
+        const files = req.files;
+        let updatedDetails = {};
+        if (description !== undefined) {
+            updatedDetails['description'] = description
+        }
+        if (files[0] !== undefined) {
+            updatedDetails['image'] = files[0];
+        }
+        if (files[1] !== undefined) {
+            updatedDetails['video'] = files[1];
+        }
+        if (isPublic !== undefined) {
+            updatedDetails['isPublic'] = isPublic;
+        }
+        if (hashTag !== undefined) {
+            updatedDetails['$addToSet'] = { hashTag };
+        }
+        if (friendTag !== undefined) {
+            updatedDetails['$addToSet'] = { friendTag };
+        }
+        const updatedPost = await post.findOneAndUpdate({
+            postedBy: req.user_id
+        }, {
+            $set: updatedDetails
+        }, {
+            new: true
+        });
+        return res
+            .status(201)
+            .send({
+                status: true,
+                message: "Post edited successfully",
+                data: updatedPost
+            });
 
     } catch (err) {
         return res
@@ -44,7 +80,7 @@ const editPost = async function (req, res) {
     }
 };
 
-const likePost = async function (req, res) {
+const likePost = async function (req, res, next) {
     try {
         const userDet = await user.findOne({ user_id: req.user_id });
         if (userDet.likedPosts.includes(req.params.postId)) {
@@ -78,7 +114,7 @@ const likePost = async function (req, res) {
     }
 }
 
-const deletePost = async function (req, res) {
+const deletePost = async function (req, res, next) {
     try {
         const deleted = await post.findOneAndUpdate({
             user_id: req.params.user_id,
@@ -110,9 +146,24 @@ const deletePost = async function (req, res) {
     }
 };
 
-const getFeed = async function (req, res) {
+const getFeed = async function (req, res, next) {
     try {
-        
+        const userDet = await user.findOne({ user_id: req.user_id });
+        const filter = {
+            user_id: { $nin: userDet.blockedUsers }
+        };
+        const postFeed = await post.aggregate([{
+            $match: filter
+        }, {
+            $sample: {size: 10}
+        }]);
+        return res
+            .status(404)
+            .send({
+                status: false,
+                message: "Posts Feed",
+                data: postFeed
+            });
     } catch (err) {
         return res
             .status(500)

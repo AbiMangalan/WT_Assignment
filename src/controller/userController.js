@@ -1,6 +1,6 @@
 const user = require('../model/userModel');
 const { sign } = require('jsonwebtoken');
-const { isRequired } = require('./validator/userValidations');
+const { isInvalid } = require('./validator/userValidations');
 const post = require('../model/postModel');
 
 const getNextId = async function () {
@@ -12,9 +12,9 @@ const getNextId = async function () {
     }
 };
 
-const register = async function (req, res) {
+const register = async function (req, res, next) {
     try {
-        const errors = isRequired(req.body);
+        const errors = isInvalid(req.body);
         if (errors.length) {
             return res
                 .status(400)
@@ -54,7 +54,7 @@ const register = async function (req, res) {
     }
 };
 
-const login = async function (req, res) {
+const login = async function (req, res, next) {
     try {
         const loginCredentials = req.body;
         const errors = isValid(loginCredentials);
@@ -90,9 +90,36 @@ const login = async function (req, res) {
     }
 };
 
-const editProfile = async function (req, res) {
+const editProfile = async function (req, res, next) {
     try {
-
+        const { name, email_id, mobile_no, isPublic } = req.body;
+        let updateUserDet = {};
+        if(name !== undefined) {
+            updateUserDet['name'] = name;
+        }
+        if(email_id !== undefined) {
+            updateUserDet['email_id'] = email_id;
+        }
+        if(mobile_no !== undefined) {
+            updateUserDet['mobile_no'] = mobile_no;
+        }
+        if(isPublic !== undefined) {
+            updateUserDet['isPublic'] = isPublic;
+        }
+        const updatedUser = await user.findOneAndUpdate({
+            user_id: req.user_id
+        }, {
+            $set: updateUserDet
+        }, {
+            new: true
+        });
+        return res
+            .status(200)
+            .send({
+                status: true,
+                message: "User Profile Updated",
+                data: updateUserDet
+            });
     } catch (err) {
         return res
             .status(500)
@@ -103,7 +130,7 @@ const editProfile = async function (req, res) {
     }
 };
 
-const follow = async function (req, res) {
+const follow = async function (req, res, next) {
     try {
         const followedUser = await user.findOneAndUpdate({
             user_id: req.params.userId
@@ -137,7 +164,7 @@ const follow = async function (req, res) {
     }
 };
 
-const unfollow = async function (req, res) {
+const unfollow = async function (req, res, next) {
     try {
         const followedUser = await user.findOneAndUpdate({
             user_id: req.params.userId
@@ -171,7 +198,7 @@ const unfollow = async function (req, res) {
     }
 };
 
-const block = async function (req, res) {
+const block = async function (req, res, next) {
     try {
         const updatedUser = await user.findOneAndUpdate({
             user_id: req.user_id
@@ -196,7 +223,7 @@ const block = async function (req, res) {
     }
 };
 
-const unblock = async function (req, res) {
+const unblock = async function (req, res, next) {
     try {
         const updatedUser = await user.findOneAndUpdate({
             user_id: req.user_id
@@ -221,7 +248,7 @@ const unblock = async function (req, res) {
     }
 };
 
-const profileDetails = async function (req, res) {
+const profileDetails = async function (req, res, next) {
     try {
         const userProfile = await user.findOne({ user_id: req.params.userId });
         if (!userProfile) {

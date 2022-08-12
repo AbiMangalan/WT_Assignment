@@ -20,7 +20,7 @@ const postSchema = new mongoose.Schema({
         default: true
     },
     hashTag: [String],
-    friendtag: [Number],
+    friendTag: [Number],
     likes: {
         type: Number,
         default: 0

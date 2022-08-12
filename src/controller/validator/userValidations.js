@@ -25,7 +25,8 @@ function isValid(loginCredentials) {
         console.log(err.message);
     }
 }
-function isRequired(data, files) {
+
+function isRequired(data) {
     try {
         const isValid = (value) => {
             if (typeof value === 'undefined' || value === null) return false
@@ -111,8 +112,6 @@ function isRequired(data, files) {
         console.log({ status: false, message: err.message })
     }
 }
-
-
 
 function isInvalid(data, getEmail, getPhone, files) {
     try {
@@ -202,6 +201,5 @@ function isInvalid(data, getEmail, getPhone, files) {
         console.log({ status: false, message: err })
     }
 }
-
 
 module.exports = { isRequired, isInvalid, isValid }
