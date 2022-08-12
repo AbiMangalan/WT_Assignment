@@ -4,16 +4,16 @@ const { isInvalid } = require('./validator/postValidations');
 
 const createPost = async function (req, res, next) {
     try {
-        let errors = isInvalid(req.body);
-        if (errors.length) {
-            return res
-                .status(400)
-                .send({
-                    status: false,
-                    message: 'Bad request',
-                    error: errors
-                });
-        }
+        // let errors = isInvalid(req.body);
+        // if (errors.length) {
+        //     return res
+        //         .status(400)
+        //         .send({
+        //             status: false,
+        //             message: 'Bad request',
+        //             error: errors
+        //         });
+        // }
         const newPost = await post.create(req.body);
         return res
             .status(201)

@@ -14,7 +14,10 @@ const getNextId = async function () {
 
 const register = async function (req, res, next) {
     try {
-        const errors = isInvalid(req.body);
+        const getEmail = await user.findOne({ email_id: req.body.email_id });
+        const getMobile = await user.findOne({ mobile_no: req.body.mobile_no.trim().slice(-10) });
+        const getUserName = await user.findOne({ user_name: req.body.user_name });
+        const errors = isInvalid(req.body, getEmail, getMobile, getUserName);
         if (errors.length) {
             return res
                 .status(400)
@@ -78,7 +81,7 @@ const login = async function (req, res, next) {
             .send({
                 status: true,
                 message: "Login successful",
-                data: token
+                data: { token }
             });
     } catch (err) {
         return res
@@ -94,16 +97,16 @@ const editProfile = async function (req, res, next) {
     try {
         const { name, email_id, mobile_no, isPublic } = req.body;
         let updateUserDet = {};
-        if(name !== undefined) {
+        if (name !== undefined) {
             updateUserDet['name'] = name;
         }
-        if(email_id !== undefined) {
+        if (email_id !== undefined) {
             updateUserDet['email_id'] = email_id;
         }
-        if(mobile_no !== undefined) {
+        if (mobile_no !== undefined) {
             updateUserDet['mobile_no'] = mobile_no;
         }
-        if(isPublic !== undefined) {
+        if (isPublic !== undefined) {
             updateUserDet['isPublic'] = isPublic;
         }
         const updatedUser = await user.findOneAndUpdate({

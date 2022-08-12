@@ -1,12 +1,13 @@
-const { verify } = require('jsonwebtoken');
-const { verifyAsync } = require('util').promisify(verify);
+const jwt = require('jsonwebtoken')
+const util = require('util');
+const jwtVerifyAsync = util.promisify(jwt.verify);
 // const post = require('../../model/postModel');
 // const user = require('../../model/userModel');
 
 const authentication = async function (req, res, next) {
     try {
         const token = req.headers['x-api-key'];
-        const verifiedToken = await verifyAsync(token, process.env.SECRET_KEY);
+        const verifiedToken = await jwtVerifyAsync(token, process.env.SECRET_KEY);
         req.user_id = verifiedToken.user_id;
         next();
 
