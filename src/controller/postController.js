@@ -14,6 +14,7 @@ const createPost = async function (req, res, next) {
         //             error: errors
         //         });
         // }
+        
         const newPost = await post.create(req.body);
         return res
             .status(201)
