@@ -3,11 +3,13 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const router = require('./route/router');
+const multer = require('multer');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(multer().any());
 
-mongoose.connect('mongodb+srv://WoW_Talent_Assignment:cMiFZmsy3Yt1nEIl@cluster0.w5bka.mongodb.net/test',
+mongoose.connect(process.env.DB_CONN_STRING,
     { useNewUrlParser: true })
     .then(() => console.log('MongoDb connected...'))
     .catch((err) => console.log(err.message));

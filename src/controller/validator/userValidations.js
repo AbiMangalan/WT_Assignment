@@ -1,12 +1,37 @@
-//check Validity
-const isValid = (value) => {
-    if (typeof value === 'undefined' || value === null) return false
-    if (typeof value === 'string' && value.trim().length === 0) return false
-    return true
+function isValid(loginCredentials) {
+    try {
+        const isValidField = (value) => {
+            if (typeof value === 'undefined' || value === null) return false
+            if (typeof value === 'string' && value.trim().length === 0) return false
+            return true
+        }
+        let error = [];
+        if (!isValidField(loginCredentials.user_name)) {
+            error.push("User name is required.");
+        } else if (typeof data.fname === "string" && !(/^[a-zA-Z]+$/.test(loginCredentials.user_name?.trim()))) {
+            error.push("enter a valid user name");
+        }
+        if (!isValidField(loginCredentials.password)) {
+            error.push("Password is required.");
+        } else {
+            if (loginCredentials.password?.trim() && loginCredentials.password.length < 8)
+                error.push("password must have atleast 8 characters");
+            else if (!(/[^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}]/.test(loginCredentials.password) && /[A-Z]/.test(loginCredentials.password))) {
+                error.push("password ")
+            }
+        }
+        return error;
+    } catch (err) {
+        console.log(err.message);
+    }
 }
-
 function isRequired(data, files) {
     try {
+        const isValid = (value) => {
+            if (typeof value === 'undefined' || value === null) return false
+            if (typeof value === 'string' && value.trim().length === 0) return false
+            return true
+        }
         let error = []
         //checks if user has given any data
         if (Object.keys(data).length == 0)
@@ -129,7 +154,7 @@ function isInvalid(data, getEmail, getPhone, files) {
         if (data.password?.trim() && (data.password.length < 8 || data.password.length > 15))
             error.push("password must have 8-15 characters")
 
-        if (typeof data.address == 'string' && data.address.length == 0) 
+        if (typeof data.address == 'string' && data.address.length == 0)
             error.push('enter valid address')
 
         if (data.address) {

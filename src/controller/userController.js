@@ -238,8 +238,21 @@ const profileDetails = async function (req, res) {
             followers: userProfile.followerCount,
             following: userProfile.followingCount
         }
-        const postDetails = await post.find({});
-
+        const userPosts = await post.find({ postedBy: req.user_id, isPublic: true });
+        details['posts'] = userPosts.length;
+        let filter = userPosts.reduce((set, curr) => set.add(curr._id), new Set());
+        filter = { likedPosts: { $in: Array.from(filter) } };
+        let likedBy = await user.aggregate([{
+            $match: filter
+        }]);
+        details['likedBy'] = likedBy;
+        return res
+            .status(200)
+            .send({
+                status: true,
+                message: "User details",
+                data: details
+            });
     } catch (err) {
         return res
             .status(500)
