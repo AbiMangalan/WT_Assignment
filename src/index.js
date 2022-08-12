@@ -16,6 +16,6 @@ mongoose.connect(process.env.DB_CONN_STRING,
 
 app.use('/', router);
 
-app.all('*', (req, res) => res.status(400).send({ status: false, message: 'Bad Request' }));
+// app.all('*', (req, res) => res.status(400).send({ status: false, message: 'Bad Request' }));
 
 app.listen(process.env.PORT, () => console.log('Express App running on port', process.env.PORT));
